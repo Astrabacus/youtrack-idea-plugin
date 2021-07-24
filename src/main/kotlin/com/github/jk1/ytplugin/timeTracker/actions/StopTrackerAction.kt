@@ -5,6 +5,7 @@ import com.github.jk1.ytplugin.logger
 import com.github.jk1.ytplugin.rest.TimeTrackerRestClient
 import com.github.jk1.ytplugin.tasks.NoYouTrackRepositoryException
 import com.github.jk1.ytplugin.tasks.YouTrackServer
+import com.github.jk1.ytplugin.timeTracker.TimerWidget
 import com.github.jk1.ytplugin.timeTracker.TrackerNotification
 import com.github.jk1.ytplugin.ui.YouTrackPluginIcons
 import com.github.jk1.ytplugin.whenActive
@@ -14,6 +15,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
+import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
 import java.util.*
 
 
@@ -64,7 +66,11 @@ class StopTrackerAction : AnAction(
         try {
             timer.stop()
             val bar = WindowManager.getInstance().getStatusBar(project)
-            bar?.removeWidget("Time Tracking Clock")
+
+            val f = StatusBarWidgetsManager(project).findWidgetFactory("Time Tracking Clock Widget")
+            f?.disposeWidget(TimerWidget(timer))
+
+//            bar?.removeWidget("Time Tracking Clock Widget")
 
             if (timer.recordedTime == "0")
                 trackerNote.notify("Spent time shorter than 1 minute is excluded from time tracking", NotificationType.WARNING)

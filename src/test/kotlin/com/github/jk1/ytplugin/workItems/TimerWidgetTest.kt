@@ -6,6 +6,7 @@ import com.github.jk1.ytplugin.timeTracker.TimerWidget
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.openapi.wm.impl.TestWindowManager
+import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
 import org.junit.After
 import org.junit.Before
@@ -30,16 +31,20 @@ class InputCredentialsTest :  IdeaProjectTrait, ComponentAware {
 
         myTimer.isRunning = true
         myTimer.isPaused = false
-        if (statusBar?.getWidget("Time Tracking Clock") == null) {
-            statusBar?.addWidget(TimerWidget(myTimer, project), project)
-        }
+
+        val f = StatusBarWidgetsManager(project).findWidgetFactory("Time Tracking Clock Widget")
+        f?.createWidget(project)
+
+//        if (statusBar?.getWidget("Time Tracking Clock Widget") == null) {
+//            statusBar?.addWidget(TimerWidget(myTimer), project)
+//        }
     }
 
     @Test
     fun testTimeChanges() {
         val windowManager: WindowManager = TestWindowManager()
         val statusBar = windowManager.getStatusBar(project)
-        val widget: TimerWidget? = statusBar.getWidget("Time Tracking Clock") as TimerWidget?
+        val widget: TimerWidget? = statusBar.getWidget("Time Tracking Clock Widget") as TimerWidget?
         if (widget == null) {
             Intrinsics.throwNpe()
         } else {

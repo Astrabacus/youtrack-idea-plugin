@@ -10,6 +10,7 @@ import com.github.jk1.ytplugin.timeTracker.actions.StartTrackerAction
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
+import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 
@@ -78,7 +79,11 @@ class TimeTrackingService {
                     }
                 } else {
                     val bar = project.let { it1 -> WindowManager.getInstance().getStatusBar(it1) }
-                    bar?.removeWidget("Time Tracking Clock")
+//                    bar?.removeWidget("Time Tracking Clock Widget")
+
+                    val f = StatusBarWidgetsManager(project).findWidgetFactory("Time Tracking Clock Widget")
+                    f?.disposeWidget(TimerWidget(timer))
+
                     timer.activityTracker?.dispose()
                 }
             }

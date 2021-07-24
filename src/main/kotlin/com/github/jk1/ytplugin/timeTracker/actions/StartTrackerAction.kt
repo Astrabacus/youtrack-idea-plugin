@@ -13,6 +13,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
+import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
 
 
 class StartTrackerAction : AnAction(
@@ -73,8 +74,13 @@ class StartTrackerAction : AnAction(
         //  after manual pause only manual start is supported
         if (!myTimer.isAutoTrackingTemporaryDisabled) {
             val bar = WindowManager.getInstance().getStatusBar(project)
-            if (bar?.getWidget("Time Tracking Clock") == null) {
-                bar?.addWidget(TimerWidget(myTimer, parentDisposable), parentDisposable)
+            val f = StatusBarWidgetsManager(project).findWidgetFactory("Time Tracking Clock Widget")
+//            f?.disposeWidget(TimerWidget(myTimer))
+//            StatusBarWidgetsManager(project).updateWidget(TimerWidgetFactory())
+            if (bar?.getWidget("Time Tracking Clock Widget") == null) {
+//                f?.
+//                f?.createWidget(project)
+                bar?.addWidget(TimerWidget(myTimer), parentDisposable)
             }
 
             if (myTimer.isAutoTrackingEnable) {
